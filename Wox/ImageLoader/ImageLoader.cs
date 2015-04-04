@@ -38,18 +38,24 @@ namespace Wox.ImageLoader
 
         private static ImageSource GetIcon(string fileName)
         {
-            if (System.IO.File.Exists(fileName) == false)
+            try
             {
-                return null;
+                if (System.IO.File.Exists(fileName) == false)
+                {
+                    return null;
+                }
+                
+                Icon icon = GetFileIcon(fileName);
+                if (icon == null) icon = Icon.ExtractAssociatedIcon(fileName);
+    
+                if (icon != null)
+                {
+                    return System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(icon.Handle,
+                        new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
+                }
             }
-            
-            Icon icon = GetFileIcon(fileName);
-            if (icon == null) icon = Icon.ExtractAssociatedIcon(fileName);
-
-            if (icon != null)
+            catch (Exception e)
             {
-                return System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(icon.Handle,
-                    new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
             }
 
             return null;
